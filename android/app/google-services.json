@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "898451937717",
+    "project_id": "desafio-capyba",
+    "storage_bucket": "desafio-capyba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:898451937717:android:0509cb37397d1936fca1fc",
+        "android_client_info": {
+          "package_name": "com.renanalencar.desafio_capyba"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "898451937717-95j5s01umbbj39p5lh1g2crc41lrcmv1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5N3YVuvtfSf2_-NNrKoqKA4vehFKA9qs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "898451937717-95j5s01umbbj39p5lh1g2crc41lrcmv1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

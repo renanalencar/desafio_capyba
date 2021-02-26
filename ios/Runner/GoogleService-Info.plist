@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>898451937717-4db2srntpoogflpiddnclqbsso0p49ob.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.898451937717-4db2srntpoogflpiddnclqbsso0p49ob</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCVcd3IAQ1h9s2JIyo7K3xaxH7MQnwSNSM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>898451937717</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.renanalencar.desafio-capyba</string>
+	<key>PROJECT_ID</key>
+	<string>desafio-capyba</string>
+	<key>STORAGE_BUCKET</key>
+	<string>desafio-capyba.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:898451937717:ios:18c57e6589b0bdcafca1fc</string>
+</dict>
+</plist>
