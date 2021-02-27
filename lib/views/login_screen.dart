@@ -9,9 +9,8 @@ class Login extends StatefulWidget {
 
 class _LoginViewState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _emailController;
-  TextEditingController _passwordController;
-  bool isSubmitting = false;
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +26,7 @@ class _LoginViewState extends State<Login> {
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       style: TextStyle(
-        color: Colors.white,
+        color: Colors.black,
       ),
       cursorColor: Colors.black,
       decoration: InputDecoration(
@@ -46,10 +45,10 @@ class _LoginViewState extends State<Login> {
 
     final passwordField = Column(children: <Widget>[
       TextFormField(
-        // enabled: isSubmitting,
+        obscureText: true,
         controller: _passwordController,
         style: TextStyle(
-          color: Colors.white,
+          color: Colors.black,
         ),
         cursorColor: Colors.black,
         decoration: InputDecoration(
@@ -112,8 +111,21 @@ class _LoginViewState extends State<Login> {
               color: Colors.black,
               fontWeight: FontWeight.bold,
             )),
-        onPressed: () {
-          // TODO: handle authentication
+        onPressed: () async {
+          try {
+            User user = (await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: _emailController.text,
+                    password: _passwordController.text))
+                .user;
+            if (user != null) {
+              Navigator.of(context).pushNamed(AppRoutes.menu);
+            }
+          } catch (e) {
+            print(e);
+            _emailController.text = "";
+            _passwordController.text = "";
+            // TODO: AlertDialog with error
+          }
         },
       ),
     );

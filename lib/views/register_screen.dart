@@ -9,10 +9,10 @@ class Register extends StatefulWidget {
 
 class _RegisterViewState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _usernameController;
-  TextEditingController _emailController;
-  TextEditingController _passwordController;
-  TextEditingController _repasswordController;
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _repasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class _RegisterViewState extends State<Register> {
       // enabled: isSubmitting,
       controller: _usernameController,
       style: TextStyle(
-        color: Colors.white,
+        color: Colors.black,
       ),
       cursorColor: Colors.black,
       decoration: InputDecoration(
@@ -49,7 +49,7 @@ class _RegisterViewState extends State<Register> {
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       style: TextStyle(
-        color: Colors.white,
+        color: Colors.black,
       ),
       cursorColor: Colors.black,
       decoration: InputDecoration(
@@ -67,10 +67,10 @@ class _RegisterViewState extends State<Register> {
     );
 
     final passwordField = TextFormField(
-      // enabled: isSubmitting,
+      obscureText: true,
       controller: _passwordController,
       style: TextStyle(
-        color: Colors.white,
+        color: Colors.black,
       ),
       cursorColor: Colors.black,
       decoration: InputDecoration(
@@ -88,10 +88,10 @@ class _RegisterViewState extends State<Register> {
     );
 
     final repasswordField = TextFormField(
-      // enabled: isSubmitting,
+      obscureText: true,
       controller: _repasswordController,
       style: TextStyle(
-        color: Colors.white,
+        color: Colors.black,
       ),
       cursorColor: Colors.black,
       decoration: InputDecoration(
@@ -121,7 +121,7 @@ class _RegisterViewState extends State<Register> {
       ),
     );
 
-    final loginButton = Material(
+    final registerButton = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(25.0),
       color: Colors.white,
@@ -135,8 +135,27 @@ class _RegisterViewState extends State<Register> {
               color: Colors.black,
               fontWeight: FontWeight.bold,
             )),
-        onPressed: () {
-          // TODO: handle authentication
+        onPressed: () async {
+          try {
+            User user = (await FirebaseAuth.instance
+                    .createUserWithEmailAndPassword(
+                        email: _emailController.text,
+                        password: _passwordController.text))
+                .user;
+            if (user != null) {
+              await FirebaseAuth.instance.currentUser
+                  .updateProfile(displayName: user.displayName);
+              Navigator.of(context).pushNamed(AppRoutes.menu);
+            }
+          } catch (e) {
+            print(e);
+            print(e);
+            _usernameController.text = "";
+            _emailController.text = "";
+            _passwordController.text = "";
+            _repasswordController.text = "";
+            // TODO: alertdialog with error
+          }
         },
       ),
     );
@@ -145,7 +164,7 @@ class _RegisterViewState extends State<Register> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        loginButton,
+        registerButton,
         Padding(
           padding: EdgeInsets.all(8.0),
         ),
