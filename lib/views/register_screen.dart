@@ -39,7 +39,7 @@ class _RegisterViewState extends State<Register> {
           color: Colors.black,
         ),
         hintStyle: TextStyle(
-          color: Colors.white,
+          color: Colors.black12,
         ),
       ),
     );
@@ -61,7 +61,7 @@ class _RegisterViewState extends State<Register> {
           color: Colors.black,
         ),
         hintStyle: TextStyle(
-          color: Colors.white,
+          color: Colors.black12,
         ),
       ),
     );
@@ -82,7 +82,7 @@ class _RegisterViewState extends State<Register> {
           color: Colors.black,
         ),
         hintStyle: TextStyle(
-          color: Colors.white,
+          color: Colors.black12,
         ),
       ),
     );
@@ -103,7 +103,7 @@ class _RegisterViewState extends State<Register> {
           color: Colors.black,
         ),
         hintStyle: TextStyle(
-          color: Colors.white,
+          color: Colors.black12,
         ),
       ),
     );
@@ -142,13 +142,16 @@ class _RegisterViewState extends State<Register> {
                         email: _emailController.text,
                         password: _passwordController.text))
                 .user;
+            user.updateProfile(
+                displayName: _usernameController.text, photoURL: '#');
+            user.sendEmailVerification();
+
             if (user != null) {
               await FirebaseAuth.instance.currentUser
                   .updateProfile(displayName: user.displayName);
               Navigator.of(context).pushNamed(AppRoutes.menu);
             }
           } catch (e) {
-            print(e);
             print(e);
             _usernameController.text = "";
             _emailController.text = "";
