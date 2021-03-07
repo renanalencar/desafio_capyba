@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:desafio_capyba/views/theme/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:desafio_capyba/views/profile/avatar.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -13,6 +14,7 @@ class _RegisterViewState extends State<Register> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _repasswordController = TextEditingController();
+  String _avatarUrl = '';
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +24,8 @@ class _RegisterViewState extends State<Register> {
       "assets/logo.png",
       height: mq.size.height / 4,
     );
+
+    final avatar = Avatar(avatarUrl: _avatarUrl, onTap: () {});
 
     final usernameField = TextFormField(
       // enabled: isSubmitting,
@@ -201,16 +205,17 @@ class _RegisterViewState extends State<Register> {
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(36),
+          padding: EdgeInsets.only(left: 36, right: 36),
           child: Container(
             height: mq.size.height,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 logo,
+                avatar,
                 fields,
                 Padding(
-                  padding: EdgeInsets.only(bottom: 150),
+                  padding: EdgeInsets.only(bottom: 10),
                   child: bottom,
                 ),
               ],

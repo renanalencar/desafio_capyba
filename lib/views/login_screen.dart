@@ -118,9 +118,6 @@ class _LoginViewState extends State<Login> {
                     password: _passwordController.text))
                 .user;
             if (user != null) {
-              if (user.emailVerified) {
-                print("Usuário não está verificado");
-              }
               Navigator.of(context).pushNamed(AppRoutes.menu);
             }
           } catch (e) {
