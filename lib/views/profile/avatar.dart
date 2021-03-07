@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class Avatar extends StatelessWidget {
@@ -11,15 +13,22 @@ class Avatar extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Center(
-        child: avatarUrl == ''
+        child: avatarUrl == null
             ? CircleAvatar(
                 radius: 50.0,
-                child: Icon(Icons.photo_camera),
+                child:
+                    Icon(Icons.photo_camera, size: 48, color: Colors.black87),
+                backgroundColor: const Color(0xFF00EB5A),
               )
-            : CircleAvatar(
-                radius: 50.0,
-                backgroundImage: NetworkImage(avatarUrl),
-              ),
+            : (avatarUrl.contains("storage/emulated")
+                ? CircleAvatar(
+                    radius: 50.0,
+                    backgroundImage: FileImage(File(avatarUrl)),
+                  )
+                : CircleAvatar(
+                    radius: 50.0,
+                    backgroundImage: NetworkImage(avatarUrl),
+                  )),
       ),
     );
   }

@@ -23,13 +23,56 @@ class AuthRepo {
     return user;
   }
 
-  Future<void> signInWithEmailAndPassword(
+  Future<UserModel> createUserWithEmailAndPassword(
       {String email, String password}) async {
-    await _auth.signInWithEmailAndPassword(email: email, password: password);
+    var authResult = await _auth.createUserWithEmailAndPassword(
+        email: email, password: password);
+    return UserModel(authResult.user.uid,
+        displayName: authResult.user.displayName);
+  }
+
+  Future<UserModel> signInWithEmailAndPassword(
+      {String email, String password}) async {
+    var authResult = await _auth.signInWithEmailAndPassword(
+        email: email, password: password);
+    return UserModel(authResult.user.uid,
+        displayName: authResult.user.displayName);
   }
 
   Future<UserModel> getUser() async {
     var user = _auth.currentUser;
-    return UserModel(user.uid, displayName: user.displayName);
+    return UserModel(user.uid,
+        displayName: user.displayName, email: user.email);
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
+  }
+
+  Future<void> updateDisplayName(String displayName) async {
+    var user = _auth.currentUser;
+
+    user.updateProfile(
+      displayName: displayName,
+    );
+  }
+
+  Future<bool> validatePassword(String password) async {
+    var user = _auth.currentUser;
+
+    var authCredentials =
+        EmailAuthProvider.credential(email: user.email, password: password);
+    try {
+      var authResult = await user.reauthenticateWithCredential(authCredentials);
+      return authResult.user != null;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<void> updatePassword(String password) async {
+    var user = _auth.currentUser;
+    user.updatePassword(password);
   }
 }

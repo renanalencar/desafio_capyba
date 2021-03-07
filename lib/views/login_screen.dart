@@ -1,3 +1,5 @@
+import 'package:desafio_capyba/controllers/user_controller.dart';
+import 'package:desafio_capyba/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:desafio_capyba/views/theme/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -112,20 +114,9 @@ class _LoginViewState extends State<Login> {
               fontWeight: FontWeight.bold,
             )),
         onPressed: () async {
-          try {
-            User user = (await FirebaseAuth.instance.signInWithEmailAndPassword(
-                    email: _emailController.text,
-                    password: _passwordController.text))
-                .user;
-            if (user != null) {
-              Navigator.of(context).pushNamed(AppRoutes.menu);
-            }
-          } catch (e) {
-            print(e);
-            _emailController.text = "";
-            _passwordController.text = "";
-            // TODO: AlertDialog with error
-          }
+          await locator.get<UserController>().signInWithEmailAndPassword(
+              email: _emailController.text, password: _passwordController.text);
+          Navigator.of(context).pushNamed(AppRoutes.menu);
         },
       ),
     );

@@ -1,7 +1,11 @@
+import 'dart:io';
+
+import 'package:desafio_capyba/controllers/user_controller.dart';
+import 'package:desafio_capyba/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:desafio_capyba/views/theme/routes.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:desafio_capyba/views/profile/avatar.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -10,11 +14,21 @@ class Register extends StatefulWidget {
 
 class _RegisterViewState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
+
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _repasswordController = TextEditingController();
-  String _avatarUrl = '';
+
+  String _avatarUrl;
+  File _avatarImage;
+
+  bool validateEmail(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    return (!regex.hasMatch(value)) ? false : true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +39,24 @@ class _RegisterViewState extends State<Register> {
       height: mq.size.height / 4,
     );
 
-    final avatar = Avatar(avatarUrl: _avatarUrl, onTap: () {});
+    final avatar = Avatar(
+      avatarUrl: _avatarUrl,
+      onTap: () async {
+        _avatarImage = File((await ImagePicker().getImage(
+                source: ImageSource.camera,
+                preferredCameraDevice: CameraDevice.front))
+            .path);
+        _avatarUrl = _avatarImage.path;
+        setState(() {});
+      },
+    );
 
     final usernameField = TextFormField(
-      // enabled: isSubmitting,
       controller: _usernameController,
+      validator: (val) {
+        if (val.isEmpty) return 'Campo obrigatório';
+        return null;
+      },
       style: TextStyle(
         color: Colors.black,
       ),
@@ -49,8 +76,12 @@ class _RegisterViewState extends State<Register> {
     );
 
     final emailField = TextFormField(
-      // enabled: isSubmitting,
       controller: _emailController,
+      validator: (val) {
+        if (val.isEmpty) return 'Campo obrigatório';
+        if (validateEmail(val)) return 'E-mail inválido';
+        return null;
+      },
       keyboardType: TextInputType.emailAddress,
       style: TextStyle(
         color: Colors.black,
@@ -73,6 +104,10 @@ class _RegisterViewState extends State<Register> {
     final passwordField = TextFormField(
       obscureText: true,
       controller: _passwordController,
+      validator: (val) {
+        if (val.isEmpty) return 'Campo obrigatório';
+        return null;
+      },
       style: TextStyle(
         color: Colors.black,
       ),
@@ -94,6 +129,11 @@ class _RegisterViewState extends State<Register> {
     final repasswordField = TextFormField(
       obscureText: true,
       controller: _repasswordController,
+      validator: (val) {
+        if (val.isEmpty) return 'Campo obrigatório';
+        if (val != _passwordController.text) return 'Senhas não conferem';
+        return null;
+      },
       style: TextStyle(
         color: Colors.black,
       ),
@@ -117,6 +157,7 @@ class _RegisterViewState extends State<Register> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
+          avatar,
           usernameField,
           emailField,
           passwordField,
@@ -140,28 +181,14 @@ class _RegisterViewState extends State<Register> {
               fontWeight: FontWeight.bold,
             )),
         onPressed: () async {
-          try {
-            User user = (await FirebaseAuth.instance
-                    .createUserWithEmailAndPassword(
-                        email: _emailController.text,
-                        password: _passwordController.text))
-                .user;
-            user.updateProfile(
-                displayName: _usernameController.text, photoURL: '#');
-            user.sendEmailVerification();
-
-            if (user != null) {
-              await FirebaseAuth.instance.currentUser
-                  .updateProfile(displayName: user.displayName);
-              Navigator.of(context).pushNamed(AppRoutes.menu);
-            }
-          } catch (e) {
-            print(e);
-            _usernameController.text = "";
-            _emailController.text = "";
-            _passwordController.text = "";
-            _repasswordController.text = "";
-            // TODO: alertdialog with error
+          if (_formKey.currentState.validate() && _avatarUrl != null) {
+            await locator.get<UserController>().createUserWithEmailAndPassword(
+                email: _emailController.text,
+                password: _passwordController.text);
+            await locator
+                .get<UserController>()
+                .uploadProfilePicture(_avatarImage);
+            Navigator.of(context).pushNamed(AppRoutes.menu);
           }
         },
       ),
@@ -212,10 +239,9 @@ class _RegisterViewState extends State<Register> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 logo,
-                avatar,
                 fields,
                 Padding(
-                  padding: EdgeInsets.only(bottom: 10),
+                  padding: EdgeInsets.only(bottom: 150),
                   child: bottom,
                 ),
               ],

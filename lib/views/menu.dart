@@ -1,3 +1,7 @@
+import 'package:desafio_capyba/controllers/user_controller.dart';
+import 'package:desafio_capyba/locator.dart';
+import 'package:desafio_capyba/models/user_model.dart';
+import 'package:desafio_capyba/views/profile/avatar.dart';
 import 'package:desafio_capyba/views/theme/routes.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +11,8 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
+  UserModel _currentUser = locator.get<UserController>().currentUser;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +28,10 @@ class _MenuScreenState extends State<MenuScreen> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              child: Text('Perfil'),
+              child: Avatar(
+                avatarUrl: _currentUser?.avatarUrl,
+                onTap: () async {},
+              ),
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
@@ -34,6 +43,16 @@ class _MenuScreenState extends State<MenuScreen> {
                 // ...
                 // Then close the drawer
                 Navigator.of(context).pushNamed(AppRoutes.profile);
+              },
+            ),
+            ListTile(
+              title: Text('Sair'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                // Then close the drawer
+                locator.get<UserController>().signOut();
+                Navigator.of(context).pushNamed(AppRoutes.openning);
               },
             ),
           ],
