@@ -30,23 +30,26 @@ class UserController {
     return await _storageRepo.getUserProfileImage(currentUser.uid);
   }
 
-  Future<void> signInWithEmailAndPassword(
-      {String email, String password}) async {
-    _currentUser = await _authRepo.signInWithEmailAndPassword(
-        email: email, password: password);
+  Future<bool> isEmailVerified() async {
+    return await _authRepo.isEmailVerified();
+  }
 
-    _currentUser.avatarUrl = await getDownloadUrl();
+  Future<void> updateDisplayName(String displayName) async {
+    _authRepo.updateDisplayName(displayName);
+    _currentUser.displayName = displayName;
   }
 
   Future<void> createUserWithEmailAndPassword(
-      {String email, String password}) async {
+      {String displayName, String email, String password}) async {
     _currentUser = await _authRepo.createUserWithEmailAndPassword(
         email: email, password: password);
   }
 
-  void updateDisplayName(String displayName) {
-    _currentUser.displayName = displayName;
-    _authRepo.updateDisplayName(displayName);
+  Future<void> signInWithEmailAndPassword(
+      {String email, String password}) async {
+    _currentUser = await _authRepo.signInWithEmailAndPassword(
+        email: email, password: password);
+    _currentUser.avatarUrl = await getDownloadUrl();
   }
 
   Future<void> signOut() async {

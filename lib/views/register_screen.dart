@@ -15,7 +15,7 @@ class Register extends StatefulWidget {
 class _RegisterViewState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _displayNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _repasswordController = TextEditingController();
@@ -23,12 +23,12 @@ class _RegisterViewState extends State<Register> {
   String _avatarUrl;
   File _avatarImage;
 
-  bool validateEmail(String value) {
-    Pattern pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regex = new RegExp(pattern);
-    return (!regex.hasMatch(value)) ? false : true;
-  }
+  // bool validateEmail(String value) {
+  //   Pattern pattern =
+  //       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+  //   RegExp regex = new RegExp(pattern);
+  //   return (!regex.hasMatch(value)) ? false : true;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class _RegisterViewState extends State<Register> {
     );
 
     final usernameField = TextFormField(
-      controller: _usernameController,
+      controller: _displayNameController,
       validator: (val) {
         if (val.isEmpty) return 'Campo obrigatório';
         return null;
@@ -79,7 +79,7 @@ class _RegisterViewState extends State<Register> {
       controller: _emailController,
       validator: (val) {
         if (val.isEmpty) return 'Campo obrigatório';
-        if (validateEmail(val)) return 'E-mail inválido';
+        // if (validateEmail(val)) return 'E-mail inválido';
         return null;
       },
       keyboardType: TextInputType.emailAddress,
@@ -188,6 +188,9 @@ class _RegisterViewState extends State<Register> {
             await locator
                 .get<UserController>()
                 .uploadProfilePicture(_avatarImage);
+            await locator.get<UserController>().updateDisplayName(
+                  _displayNameController.text,
+                );
             Navigator.of(context).pushNamed(AppRoutes.menu);
           }
         },

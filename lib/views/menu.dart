@@ -1,7 +1,9 @@
 import 'package:desafio_capyba/controllers/user_controller.dart';
 import 'package:desafio_capyba/locator.dart';
 import 'package:desafio_capyba/models/user_model.dart';
+import 'package:desafio_capyba/views/logged_tab.dart';
 import 'package:desafio_capyba/views/profile/avatar.dart';
+import 'package:desafio_capyba/views/restricted_tab.dart';
 import 'package:desafio_capyba/views/theme/routes.dart';
 import 'package:flutter/material.dart';
 
@@ -15,48 +17,89 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: null,
-      appBar: AppBar(title: Text("Home Screen")),
-      body: Text("Home"),
-      drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Avatar(
-                avatarUrl: _currentUser?.avatarUrl,
-                onTap: () async {},
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: DefaultTabController(
+        length: 2,
+        initialIndex: 0,
+        child: Scaffold(
+            appBar: AppBar(
+              title: Text("Home"),
+              bottom: TabBar(
+                indicatorColor: Colors.grey,
+                tabs: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(top: 10, bottom: 10),
+                    child: Text("Logado",
+                        style: TextStyle(fontSize: 20, color: Colors.black)),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 10, bottom: 10),
+                    child: Text("Restrito",
+                        style: TextStyle(fontSize: 20, color: Colors.black)),
+                  ),
+                ],
               ),
-              decoration: BoxDecoration(
-                color: Colors.blue,
+              backgroundColor: const Color(0xFF00EB5A),
+            ),
+            body: TabBarView(
+              children: <Widget>[
+                LoggedTab(),
+                RestrictedTab(),
+              ],
+            ),
+            drawer: Drawer(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  DrawerHeader(
+                    child: Container(
+                      child: Column(
+                        children: [
+                          Avatar(
+                            avatarUrl: _currentUser?.avatarUrl,
+                            onTap: () async {},
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child: Text(
+                              _currentUser?.displayName,
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF00EB5A),
+                    ),
+                  ),
+                  ListTile(
+                    title: Text('Validar E-mail'),
+                    onTap: () async {
+                      await locator.get<UserController>().isEmailVerified()
+                          ? Navigator.of(context)
+                              .pushNamed(AppRoutes.verifyEmail)
+                          : Navigator.of(context)
+                              .pushNamed(AppRoutes.verifyEmail);
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Editar'),
+                    onTap: () {
+                      Navigator.of(context).pushNamed(AppRoutes.profile);
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Sair'),
+                    onTap: () {
+                      locator.get<UserController>().signOut();
+                      Navigator.of(context).pushNamed(AppRoutes.openning);
+                    },
+                  ),
+                ],
               ),
-            ),
-            ListTile(
-              title: Text('Editar'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.of(context).pushNamed(AppRoutes.profile);
-              },
-            ),
-            ListTile(
-              title: Text('Sair'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                locator.get<UserController>().signOut();
-                Navigator.of(context).pushNamed(AppRoutes.openning);
-              },
-            ),
-          ],
-        ),
+            )),
       ),
     );
   }

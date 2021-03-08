@@ -1,52 +1,31 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:desafio_capyba/models/user_model.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthRepo {
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  // final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   AuthRepo();
 
-  Future<void> signInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+  // Future<void> signInWithGoogle() async {
+  //   final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+  //   final GoogleSignInAuthentication googleAuth =
+  //       await googleUser.authentication;
 
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+  //   final AuthCredential credential = GoogleAuthProvider.credential(
+  //     accessToken: googleAuth.accessToken,
+  //     idToken: googleAuth.idToken,
+  //   );
 
-    final User user = (await _auth.signInWithCredential(credential)).user;
-    print("signed in " + user.displayName);
-    return user;
-  }
-
-  Future<UserModel> createUserWithEmailAndPassword(
-      {String email, String password}) async {
-    var authResult = await _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
-    return UserModel(authResult.user.uid,
-        displayName: authResult.user.displayName);
-  }
-
-  Future<UserModel> signInWithEmailAndPassword(
-      {String email, String password}) async {
-    var authResult = await _auth.signInWithEmailAndPassword(
-        email: email, password: password);
-    return UserModel(authResult.user.uid,
-        displayName: authResult.user.displayName);
-  }
+  //   final User user = (await _auth.signInWithCredential(credential)).user;
+  //   print("signed in " + user.displayName);
+  //   return user;
+  // }
 
   Future<UserModel> getUser() async {
     var user = _auth.currentUser;
-    return UserModel(user.uid,
-        displayName: user.displayName, email: user.email);
-  }
-
-  Future<void> signOut() async {
-    await _auth.signOut();
+    return UserModel(user?.uid, displayName: user?.displayName);
   }
 
   Future<void> updateDisplayName(String displayName) async {
@@ -55,6 +34,10 @@ class AuthRepo {
     user.updateProfile(
       displayName: displayName,
     );
+  }
+
+  Future<bool> isEmailVerified() async {
+    return _auth.currentUser.emailVerified;
   }
 
   Future<bool> validatePassword(String password) async {
@@ -74,5 +57,27 @@ class AuthRepo {
   Future<void> updatePassword(String password) async {
     var user = _auth.currentUser;
     user.updatePassword(password);
+  }
+
+  Future<UserModel> createUserWithEmailAndPassword(
+      {String email, String password}) async {
+    var authResult = await _auth.createUserWithEmailAndPassword(
+        email: email, password: password);
+    authResult.user.sendEmailVerification();
+
+    return UserModel(authResult.user.uid,
+        email: authResult.user.email, password: password);
+  }
+
+  Future<UserModel> signInWithEmailAndPassword(
+      {String email, String password}) async {
+    var authResult = await _auth.signInWithEmailAndPassword(
+        email: email, password: password);
+    return UserModel(authResult.user.uid,
+        displayName: authResult.user.displayName, email: authResult.user.email);
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
   }
 }

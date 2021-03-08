@@ -2,8 +2,6 @@ import 'package:desafio_capyba/controllers/user_controller.dart';
 import 'package:desafio_capyba/locator.dart';
 import 'package:desafio_capyba/models/user_model.dart';
 import 'package:desafio_capyba/views/profile/avatar.dart';
-import 'package:desafio_capyba/views/theme/routes.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -17,13 +15,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   UserModel _currentUser = locator.get<UserController>().currentUser;
 
-  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _displayNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _repasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    _displayNameController.text = _currentUser.displayName ?? "Null";
+    _emailController.text = _currentUser.email ?? "Null";
+
     final mq = MediaQuery.of(context);
 
     final logo = Image.asset(
@@ -33,13 +34,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     final avatar = Avatar(
       avatarUrl: _currentUser?.avatarUrl,
-      onTap: () {
-        print(_currentUser.avatarUrl);
-      },
+      onTap: () {},
     );
 
     final usernameField = TextFormField(
-      controller: _usernameController,
+      controller: _displayNameController,
       style: TextStyle(
         color: Colors.black,
       ),
@@ -101,7 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
 
-    final repasswordField = TextFormField(
+    final newPasswordField = TextFormField(
       obscureText: true,
       controller: _repasswordController,
       style: TextStyle(
@@ -112,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.green)),
         hintText: "senha",
-        labelText: "Repita a senha",
+        labelText: "Nova senha",
         labelStyle: TextStyle(
           color: Colors.black,
         ),
@@ -130,88 +129,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
           usernameField,
           emailField,
           passwordField,
-          repasswordField,
+          newPasswordField,
         ],
       ),
     );
 
-    final registerButton = Material(
+    final updateButton = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(25.0),
       color: Colors.white,
       child: MaterialButton(
         minWidth: mq.size.width / 1.2,
         padding: EdgeInsets.fromLTRB(10.0, 15.0, 10.0, 15.0),
-        child: Text("Cadastrar",
+        child: Text("Atualizar",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 20.0,
               color: Colors.black,
               fontWeight: FontWeight.bold,
             )),
-        onPressed: () async {
-          try {
-            User user = (await FirebaseAuth.instance
-                    .createUserWithEmailAndPassword(
-                        email: _emailController.text,
-                        password: _passwordController.text))
-                .user;
-            user.updateProfile(
-                displayName: _usernameController.text, photoURL: '#');
-            user.sendEmailVerification();
-
-            if (user != null) {
-              await FirebaseAuth.instance.currentUser
-                  .updateProfile(displayName: user.displayName);
-              Navigator.of(context).pushNamed(AppRoutes.menu);
-            }
-          } catch (e) {
-            print(e);
-            _usernameController.text = "";
-            _emailController.text = "";
-            _passwordController.text = "";
-            _repasswordController.text = "";
-            // TODO: alertdialog with error
-          }
-        },
+        onPressed: () async {},
       ),
     );
 
-    final bottom = Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        registerButton,
-        Padding(
-          padding: EdgeInsets.all(8.0),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Já é cadastrado?",
-              style: Theme.of(context)
-                  .textTheme
-                  .subtitle1
-                  .copyWith(color: Colors.black),
-            ),
-            MaterialButton(
-                child: Text(
-                  "Entrar",
-                  style: Theme.of(context).textTheme.subtitle1.copyWith(
-                      color: Colors.black,
-                      decoration: TextDecoration.underline),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pushNamed(AppRoutes.authLogin);
-                }),
-          ],
-        ),
-      ],
-    );
-
     return Scaffold(
-      appBar: AppBar(title: Text("Profile Screen")),
+      appBar: AppBar(
+        title: Text("Perfil"),
+        backgroundColor: const Color(0xFF00EB5A),
+      ),
       backgroundColor: Colors.white,
       body: Form(
         key: _formKey,
@@ -222,13 +167,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                logo,
                 avatar,
                 fields,
-                Padding(
-                  padding: EdgeInsets.only(bottom: 10),
-                  child: bottom,
-                ),
+                updateButton,
               ],
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:desafio_capyba/views/opening_screen.dart';
+import 'package:desafio_capyba/views/verify_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:desafio_capyba/views/login_screen.dart';
 import 'package:desafio_capyba/views/register_screen.dart';
@@ -14,6 +15,7 @@ class AppRoutes {
   static const String menu = '/menu';
   static const String profile = '/profile';
   static const String openning = '/openning';
+  static const String verifyEmail = '/verify-email';
 
   static Map<String, WidgetBuilder> define() {
     return {
@@ -22,6 +24,7 @@ class AppRoutes {
       menu: (context) => MenuScreen(),
       profile: (context) => ProfileScreen(),
       openning: (context) => OpeningView(),
+      verifyEmail: (context) => VerifyEmailScreen(),
     };
   }
 }
