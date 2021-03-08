@@ -2,7 +2,6 @@ import 'package:desafio_capyba/controllers/user_controller.dart';
 import 'package:desafio_capyba/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:desafio_capyba/views/theme/routes.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class Login extends StatefulWidget {
   @override

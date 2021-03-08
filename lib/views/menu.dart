@@ -63,7 +63,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           Padding(
                             padding: EdgeInsets.only(top: 10),
                             child: Text(
-                              _currentUser?.displayName,
+                              _currentUser.displayName ?? "TEXT",
                               style: TextStyle(fontSize: 20),
                             ),
                           )
